@@ -1,0 +1,212 @@
+:root {
+  --bg-color: #f4f5f7;
+  --card-bg: #ffffff;
+  --nested-bg: #f9fafb;
+  --nested-border: #edf0f2;
+  --text-primary: #1a1a1a;
+  --text-heading: #2d3436;
+  --text-muted: #636e72;
+  --bordor-color: #dfe6e9;
+  --accent: #0984e3;
+  --accent-hover: #0767b1;
+  --disabled: #b2bec3;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --bg-color: #16181c;
+  --card-bg: #22252b;
+  --nested-bg: #1a1c20;
+  --neasted-border: #30333a;
+  --text-primary: #e8e9ea;
+  --text-heading: #f1f2f3;
+  --text-muted: #9aa0a6;
+  --border-color: #3a3d44;
+  --accent: #4dabf7;
+  --accent-hover: #74c0fc;
+  --disabled: #4a4d54;
+  --shadow: rgba(0, 0, 0, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.app-header h1 {
+  color: var(--text-heading);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.theme-toggle {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+}
+
+/* Add Property form card */
+form {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+form h3 {
+  margin-top: 0;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+form div {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+input {
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 14px;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+input-focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+button {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+button:diabled{
+  background-color: var(--disabled);
+  cursor: not-allowed;
+}
+
+/* Property list*/
+h2 {
+  color: var(--text-heading);
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 8px;
+  display: flex;
+  align-items: ceter;
+  gap: 8px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* Property cards */
+.app > div > ul > li {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+h4 {
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Unit sub-list */
+ul ul {
+  margin-top: 10px;
+}
+
+ul ul li {
+  background-color: var(--nested-bg);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  border: 1px solid var(--nested-border);
+}
+
+/* Nested forms inside units/tenants get a lighter look */
+ul ul li form, 
+ul ul li + form {
+  background: transparent;
+  box-shadow: none;
+  padding: 8px 0 0 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+ul ul li form div, 
+ul ul li + form div {
+  margin-bottom: 0;
+}
+
+p {
+  color: var(--text-muted);
+}
