@@ -1,75 +1,53 @@
-# React + TypeScript + Vite
+# Property Portfolio Tracker — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript frontend for tracking rental properties, units, and tenants — built to consume the [Property Portfolio Tracker API](https://github.com/sandyk118176-ai/property-portfolio-api), a Spring Boot backend.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This app lets a landlord manage a property portfolio: add properties, add units under each property, and move tenants into units. It mirrors the backend's data model exactly, with nested UI components reflecting the same relationships enforced in the Spring Boot API.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** + **TypeScript**
+- **Vite** (build tool and dev server)
+- **Axios** (HTTP client)
+- **Lucide React** (icons)
+- **CSS custom properties** for theming (light/dark mode)
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- View all properties, with nested units and tenants
+- Add a new property
+- Add a new unit under a specific property
+- Move a tenant into a vacant unit (automatically reflects the backend's occupancy business logic)
+- Light/dark mode toggle
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Project Structure
+## Data Flow
+Each component fetches and manages only the data relevant to it, receiving the parent's ID as a prop (e.g., `UnitList` receives `propertyId`, `TenantSection` receives `unitId`) — mirroring the nested REST endpoints on the backend (`/api/properties/{propertyId}/units`, `/api/units/{unitId}/tenants`).
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Running Locally
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**Prerequisites:**
+- Node.js
+- The [backend API](https://github.com/sandyk118176-ai/property-portfolio-api) running locally on `http://localhost:8080`
 
+```bash
+# Clone the repo
+git clone https://github.com/sandyk118176-ai/property-portfolio-frontend.git
+cd property-portfolio-frontend
+
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app will be available at `http://localhost:5173` (or the next available port).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Known Limitations / Future Improvements
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+- Units are fetched for all properties and filtered client-side; a backend endpoint like `GET /api/properties/{id}/units` would scale better with a large number of units.
+- No edit/delete UI yet — only create and view are implemented.
+- No client-side routing; everything renders on a single page.
