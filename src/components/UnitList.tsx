@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Unit } from "../types";
-import { getAllUnits, createUnit } from "../api/unitApi";
+import { getAllUnits, createUnit, deleteUnit } from "../api/unitApi";
 import TenantSection from "./TenantSection";
 
 interface UnitListProps {
@@ -55,6 +55,20 @@ const UnitList = ({ propertyId }: UnitListProps) => {
         }
     };
 
+    const handleDeleteUnit = async (id: number) => {
+        if (!window.confirm("Delete this unit and its tenant record?")) {
+            return;
+        }
+
+        try {
+            await deleteUnit(id);
+            setUnits((prev) => prev.filter((unit) => unit.id !== id));
+        } catch (err) {
+            console.error(err);
+            alert("Failed to delete unit.");
+        }
+    };
+
     if (loading) return <p>Loading units...</p>
 
     return (
@@ -67,9 +81,14 @@ const UnitList = ({ propertyId }: UnitListProps) => {
                 <ul>
                     {units.map((unit) => (
                         <li key={unit.id}>
-                            <strong>{unit.unitNumber}</strong> - Rent: $
-                            {unit.monthlyRent.toLocaleString()} -{" "}
-                            {unit.occupied ? "Occupied" : "Vacant"}
+                            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                                <span>
+                                    <strong>{unit.unitNumber}</strong> - Rent: $
+                                    {unit.monthlyRent.toLocaleString()} -{" "}
+                                    {unit.occupied ? "Occupied" : "Vacant"}
+                                </span>
+                                <button onClick={() => handleDeleteUnit(unit.id)}>Delete</button>
+                            </div>    
                             <TenantSection unitId={unit.id} occupied={unit.occupied} />
                         </li>
                     ))}

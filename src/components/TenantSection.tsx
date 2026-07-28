@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Tenant } from "../types";
-import { getAllTenants, createTenant } from "../api/tenantApi";
+import { getAllTenants, createTenant, deleteTenant } from "../api/tenantApi";
 
 interface TenantSectionProps {
     unitId: number;
@@ -55,6 +55,23 @@ const TenantSection = ({ unitId, occupied }: TenantSectionProps) => {
         }
     };
 
+    const handleDeleteTenant = async () => {
+        if (!tenant) return;
+
+        if(!window.confirm(`Move out ${tenant.name}?`)) {
+            return;
+        }
+
+        try {
+            await deleteTenant(tenant.id);
+            setTenant(null);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to remove tenant.");
+            }
+    };
+
+
     if (loading) return <p>Loading Tenant info...</p>
 
     return (
@@ -62,7 +79,8 @@ const TenantSection = ({ unitId, occupied }: TenantSectionProps) => {
             {tenant ? (
                 <p>
                     Tenant: <strong>{tenant.name}</strong> ({tenant.leaseStart} to{" "}
-                    {tenant.leaseEnd})
+                    {tenant.leaseEnd}) {" "}
+                    <button onClick={handleDeleteTenant}>Move Out</button>
                 </p>    
             ) : occupied ? (
                 <p>Marked occupied, but no tenant record found.</p>
