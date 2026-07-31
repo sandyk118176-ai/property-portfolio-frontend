@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Unit } from "../types";
-import { getAllUnits, createUnit, deleteUnit } from "../api/unitApi";
+import { getAllUnits, createUnit, deleteUnit, updateUnit } from "../api/unitApi";
 import TenantSection from "./TenantSection";
 
 interface UnitListProps {
@@ -14,6 +14,9 @@ const UnitList = ({ propertyId }: UnitListProps) => {
     const [monthlyRent, setMonthlyRent] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [editingId, setEditingId] = useState<number | null>(null);
+    const [editUnitNumber, setEditUnitNumber] = useState("");
+    const [editMonthlyRent, setEditMonthlyRent] = useState("");
 
     useEffect(() => {
         const fetchUnits = async () => {
@@ -68,6 +71,31 @@ const UnitList = ({ propertyId }: UnitListProps) => {
             alert("Failed to delete unit.");
         }
     };
+    
+    const startEditing = (unit : Unit) => {
+        setEditingId(unit.id);
+        setEditUnitNumber(unit.unitNumber);
+        setEditMonthlyRent(String(unit.monthlyRent));
+    };
+
+    const cancelEditing = () => {
+        setEditingId(null);
+    };
+
+    const saveEdit = async (id: number, occupied: boolean) => {
+        try {
+            const updated = await updateUnit(id, {
+                unitNumber: editUnitNumber, 
+                monthlyRent: Number (editMonthlyRent),
+                occupied,
+            });
+            setUnits((prev) => prev.map((unit) => (unit.id === id ? updated : unit)));
+            setEditingId(null);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to update unit.");
+        }
+    };
 
     if (loading) return <p>Loading units...</p>
 
@@ -81,14 +109,34 @@ const UnitList = ({ propertyId }: UnitListProps) => {
                 <ul>
                     {units.map((unit) => (
                         <li key={unit.id}>
-                            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                            {editingId === unit.id ? (
+                                <div>
+                                    <input 
+                                       type="text"
+                                       value={editUnitNumber}
+                                       onChange={(e) => setEditUnitNumber(e.target.value)}
+                                    />
+                                    <input 
+                                      type="number"
+                                      value={editMonthlyRent}
+                                      onChange={(e) => setEditMonthlyRent(e.target.value)}
+                                    />
+                                    <button onClick={() => saveEdit(unit.id, unit.occupied)}>Save</button>
+                                    <button onClick={cancelEditing}>Cancel</button>
+                                </div>
+                            ) : (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                                 <span>
                                     <strong>{unit.unitNumber}</strong> - Rent: $
-                                    {unit.monthlyRent.toLocaleString()} -{" "}
-                                    {unit.occupied ? "Occupied" : "Vacant"}
+                                    {unit.monthlyRent.toLocaleString()} - {" "}
+                                    {unit.occupied ? "Occupied" : "Vacant"}                                
                                 </span>
-                                <button onClick={() => handleDeleteUnit(unit.id)}>Delete</button>
-                            </div>    
+                                <div>
+                                    <button onClick={() => startEditing(unit)}>Edit</button>
+                                    <button onClick={() => handleDeleteUnit(unit.id)}>Delete</button>
+                                </div>
+                               </div>
+                            )}
                             <TenantSection unitId={unit.id} occupied={unit.occupied} />
                         </li>
                     ))}
