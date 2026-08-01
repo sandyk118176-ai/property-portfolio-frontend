@@ -71,6 +71,12 @@ const UnitList = ({ propertyId }: UnitListProps) => {
             alert("Failed to delete unit.");
         }
     };
+
+    const handleOccupancyChange = (unitId : number, occupied: boolean) => {
+        setUnits((prev) => 
+           prev.map((unit) => (unit.id == unitId ? {...unit, occupied } : unit))
+        );
+    };
     
     const startEditing = (unit : Unit) => {
         setEditingId(unit.id);
@@ -137,7 +143,11 @@ const UnitList = ({ propertyId }: UnitListProps) => {
                                 </div>
                                </div>
                             )}
-                            <TenantSection unitId={unit.id} occupied={unit.occupied} />
+                            <TenantSection 
+                               unitId={unit.id} 
+                               occupied={unit.occupied} 
+                               onOccupancyChange={handleOccupancyChange}
+                            />
                         </li>
                     ))}
                 </ul>

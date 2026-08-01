@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import type { Tenant } from "../types";
-import { getAllTenants, createTenant, deleteTenant } from "../api/tenantApi";
+import { getAllTenants, createTenant, deleteTenant, updateTenant } from "../api/tenantApi";
 
 interface TenantSectionProps {
     unitId: number;
     occupied: boolean;
+    onOccupancyChange: (unitId: number, occupied: boolean) => void;
 }
 
-const TenantSection = ({ unitId, occupied }: TenantSectionProps) => {
+const TenantSection = ({ unitId, occupied, onOccupancyChange }: TenantSectionProps) => {
     const [tenant, setTenant] = useState<Tenant | null>(null);
     const [loading, setLoading] = useState(true);
     const [name, setName] = useState("");
@@ -15,6 +16,10 @@ const TenantSection = ({ unitId, occupied }: TenantSectionProps) => {
     const [leaseEnd, setLeaseEnd] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editLeaseStart, setEditLeaseStart] = useState("");
+    const [editLeaseEnd, setEditLeaseEnd] = useState("");
+    
 
     useEffect(() => {
         const fetchTenant = async () => {
@@ -44,6 +49,7 @@ const TenantSection = ({ unitId, occupied }: TenantSectionProps) => {
               leaseEnd,
             });
             setTenant(newTenant);
+            onOccupancyChange(unitId, true);
             setName("");
             setLeaseStart("");
             setLeaseEnd("");
@@ -65,10 +71,38 @@ const TenantSection = ({ unitId, occupied }: TenantSectionProps) => {
         try {
             await deleteTenant(tenant.id);
             setTenant(null);
+            onOccupancyChange(unitId, false);
         } catch (err) {
             console.error(err);
             alert("Failed to remove tenant.");
             }
+    };
+
+    const startEditing = () => {
+        if (!tenant) return;
+        setEditLeaseStart(tenant.leaseStart);
+        setEditLeaseEnd(tenant.leaseEnd);
+        setIsEditing(true);
+    };
+
+    const cancelEditing = () => {
+        setIsEditing(false);
+    };
+
+    const saveEdit = async () => {
+        if (!tenant) return;
+        try {
+            const updated = await updateTenant(tenant.id, {
+                name: tenant.name,
+                leaseStart: editLeaseStart,
+                leaseEnd: editLeaseEnd,
+            });
+            setTenant(updated);
+            setIsEditing(false);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to update tenant.");
+        }
     };
 
 
@@ -77,11 +111,35 @@ const TenantSection = ({ unitId, occupied }: TenantSectionProps) => {
     return (
         <div style={{ marginLeft: "20px", marginTop: "5px" }}>
             {tenant ? (
-                <p>
-                    Tenant: <strong>{tenant.name}</strong> ({tenant.leaseStart} to{" "}
-                    {tenant.leaseEnd}) {" "}
-                    <button onClick={handleDeleteTenant}>Move Out</button>
-                </p>    
+                isEditing ? (
+                    <div>
+                        <label>
+                            Lease Start: {" "}
+                            <input 
+                               type="date"
+                               value={editLeaseStart}
+                               onChange={(e) => setEditLeaseStart(e.target.value)} 
+                            />
+                        </label>
+                        <label>
+                            Lease End: {" "}
+                            <input 
+                               type="date"
+                               value={editLeaseEnd}
+                               onChange={(e) => setEditLeaseEnd(e.target.value)}
+                            />
+                        </label>
+                        <button onClick={saveEdit}>Save</button>
+                        <button onClick={cancelEditing}>Cancel</button>
+                    </div>
+                ) : (
+                    <p>
+                        Tenant: <strong>{tenant.name}</strong> ({tenant.leaseStart} to{" "}
+                        {tenant.leaseEnd}) {" "}
+                        <button onClick={startEditing}>Edit Lease</button>{" "}
+                        <button onClick={handleDeleteTenant}>Move Out</button>
+                    </p>
+                )
             ) : occupied ? (
                 <p>Marked occupied, but no tenant record found.</p>
             ) : (
