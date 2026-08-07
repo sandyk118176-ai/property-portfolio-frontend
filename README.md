@@ -2,6 +2,9 @@
 
 A React + TypeScript frontend for tracking rental properties, units, and tenants — built to consume the [Property Portfolio Tracker API](https://github.com/sandyk118176-ai/property-portfolio-api), a Spring Boot backend.
 
+**Live demo:** https://property-portfolio-frontend.vercel.app
+**API base URL:** https://property-portfolio-api.onrender.com
+
 ## Overview
 
 This app lets a landlord manage a property portfolio: add properties, add units under each property, and move tenants into units. It mirrors the backend's data model exactly, with nested UI components reflecting the same relationships enforced in the Spring Boot API.
