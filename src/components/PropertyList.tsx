@@ -77,8 +77,13 @@ const PropertyList = () => {
         };
     
 
-    if (loading) return <p>Loading properties...</p>
+    if (loading) 
+        return (
+           <p>Loading properties... (if this is your first visit in a while, the
+            server may take up to a minute to wake up)
+           </p>
 
+    ); 
     return (
         <div>
             <AddPropertyForm onPropertyAdded={handlePropertyAdded} />
