@@ -20,3 +20,11 @@ export interface Tenant {
     leaseEnd: string;
     unit?: Unit;
 }
+
+export interface PortfolioSummary {
+    totalProperties: number;
+    totalUnits: number;
+    occupiedUnits: number;
+    occupancyRate: number;
+    totalMonthlyRent: number;
+}

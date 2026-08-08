@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Moon, Sun, Building2 } from "lucide-react";
 import PropertyList from "./components/PropertyList";
 import "./App.css";
+import PortfolioSummaryCards from "./components/PortfolioSummaryCards";
 
 function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -26,6 +27,7 @@ function App() {
           {theme === "light" ? "Dark" : "Light"}
         </button>
       </div>
+      <PortfolioSummaryCards/>
       <PropertyList />
     </div>
   );
